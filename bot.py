@@ -11,14 +11,18 @@ SYMBOLS = [
     "BTC/USDT","ETH/USDT","SOL/USDT","XRP/USDT","DOGE/USDT","BNB/USDT"
 ]
 
-TIMEFRAMES = ["45m","1h","4h","1d"]
+TIMEFRAMES = ["1h","4h","12h","1d"]
 
 POLL_INTERVAL = 60  # seconds
 OPEN_EQUAL_TOL = 0.0005  # 0.05% tolerance
 # ============================================
 
 exchange = ccxt.bybit({
-    "enableRateLimit": True
+    "enableRateLimit": True,
+    "options": {
+        "defaultType": "future",   # IMPORTANT
+        "defaultSettle": "USDT"    # USDT-M futures
+    }
 })
 bot = Bot(BOT_TOKEN)
 
