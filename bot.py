@@ -8,11 +8,10 @@ BOT_TOKEN = os.getenv("BOT_TOKEN")
 CHAT_ID = os.getenv("CHAT_ID")
 
 SYMBOLS = [
-    "BTC/USDT","ETH/USDT","SOL/USDT","XRP/USDT",
-    "DOGE/USDT","BNB/USDT"
+    "BTC/USDT","ETH/USDT","SOL/USDT","XRP/USDT","DOGE/USDT","BNB/USDT"
 ]
 
-TIMEFRAMES = ["1m","5m","15m","1h","4h","1d"]
+TIMEFRAMES = ["45m","1h","4h","1d"]
 
 POLL_INTERVAL = 60  # seconds
 OPEN_EQUAL_TOL = 0.0005  # 0.05% tolerance
