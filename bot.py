@@ -17,11 +17,8 @@ POLL_INTERVAL = 60  # seconds
 OPEN_EQUAL_TOL = 0.0005  # 0.05% tolerance
 # ============================================
 
-exchange = ccxt.binanceusdm({
-    "enableRateLimit": True,
-    "options": {
-        "defaultType": "future"
-    }
+exchange = ccxt.bybit({
+    "enableRateLimit": True
 })
 bot = Bot(BOT_TOKEN)
 
