@@ -8,7 +8,12 @@ BOT_TOKEN = os.getenv("BOT_TOKEN")
 CHAT_ID = os.getenv("CHAT_ID")
 
 SYMBOLS = [
-    "BTC/USDT","ETH/USDT","SOL/USDT","XRP/USDT","DOGE/USDT","BNB/USDT"
+    "BTC/USDT:USDT",
+    "ETH/USDT:USDT",
+    "SOL/USDT:USDT",
+    "BNB/USDT:USDT",
+    "XRP/USDT:USDT",
+    "DOGE/USDT:USDT"
 ]
 
 TIMEFRAMES = ["1h","4h","12h","1d"]
@@ -17,13 +22,13 @@ POLL_INTERVAL = 60  # seconds
 OPEN_EQUAL_TOL = 0.0005  # 0.05% tolerance
 # ============================================
 
-exchange = ccxt.bybit({
+exchange = ccxt.okx({
     "enableRateLimit": True,
     "options": {
-        "defaultType": "future",   # IMPORTANT
-        "defaultSettle": "USDT"    # USDT-M futures
+        "defaultType": "swap"   # USDT perpetual futures
     }
 })
+exchange.load_markets()
 bot = Bot(BOT_TOKEN)
 
 # Prevent duplicate alerts
