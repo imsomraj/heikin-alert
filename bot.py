@@ -67,11 +67,6 @@ def is_real_doji(c):
     wick_ok = abs(upper - lower) <= rng * 0.10
     center_ok = abs(((o + cl) / 2) - ((h + l) / 2)) <= rng * 0.10
 
-    print(
-        f"O={o:.4f} H={h:.4f} L={l:.4f} C={cl:.4f} | "
-        f"body={body:.4f} rng={rng:.4f} "
-        f"body%={(body/rng)*100:.2f}%"
-    )
     return body_ok and wick_ok and center_ok
 
 # ---------- HELPERS ----------
@@ -95,23 +90,36 @@ async def scan():
                     if key in sent_alerts:
                         continue
 
-                    if not is_real_doji(d0):
-                        continue
+                    # if not is_real_doji(d0):
+                    #    continue
+                    is_doji, body_pct = is_real_doji(d0)
 
-                    # BUY SETUP
+                    if is_doji:
+                        await bot.send_message(
+                            CHAT_ID,
+                            f"🟡 DOJI FORMED\n"
+                            f"{symbol} {tf}\n"
+                            f"O={d0['open']:.4f} "
+                            f"H={d0['high']:.4f} "
+                            f"L={d0['low']:.4f} "
+                            f"C={d0['close']:.4f}\n"
+                            f"Body% = {body_pct:.2f}%"
+                        )
+
+                    # LONG SETUP
                     if d1["close"] > d1["open"] and approx_equal(d1["open"], d1["low"]):
                         sent_alerts.add(key)
                         await bot.send_message(
                             CHAT_ID,
-                            f"🟢 BUY SETUP\n{symbol} {tf}\nDoji + Open≈Low"
+                            f"🟢 LONG SETUP\n{symbol} {tf}\nDoji + Open≈Low"
                         )
 
-                    # SELL SETUP
+                    # SHORT SETUP
                     if d1["close"] < d1["open"] and approx_equal(d1["open"], d1["high"]):
                         sent_alerts.add(key)
                         await bot.send_message(
                             CHAT_ID,
-                            f"🔴 SELL SETUP\n{symbol} {tf}\nDoji + Open≈High"
+                            f"🔴 SHORT SETUP\n{symbol} {tf}\nDoji + Open≈High"
                         )
 
                 except Exception as e:
