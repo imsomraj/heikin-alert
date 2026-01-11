@@ -70,26 +70,27 @@ def approx_equal(a, b):
 
 # ---------- MAIN LOOP ----------
 async def scan():
-    await bot.send_message(CHAT_ID, "🤖 Heikin Ashi Bot started (Railway)")
+    await bot.send_message(CHAT_ID, "🤖 Heikin Ashi Bot started (FINAL LOGIC)")
 
     while True:
         for symbol in SYMBOLS:
             for tf in TIMEFRAMES:
                 try:
-                    candles = exchange.fetch_ohlcv(symbol, tf, limit=5)
+                    candles = exchange.fetch_ohlcv(symbol, tf, limit=100)
                     ha = heikin_ashi(candles)
 
-                    d0, d1, d2 = ha[-3], ha[-2], ha[-1]
-                    key = f"{symbol}-{tf}-{candles[-2][0]}"
+                    d0 = ha[-3]  # Doji candle (closed)
+                    d1 = ha[-2]  # Setup candle (closed)
+                    d2 = ha[-1]  # Live candle
 
-                    if key in sent_alerts:
-                        continue
+                    doji_key = f"DOJI-{symbol}-{tf}-{candles[-3][0]}"
+                    setup_key = f"SETUP-{symbol}-{tf}-{candles[-2][0]}"
 
-                    # if not is_real_doji(d0):
-                    #    continue
+                    # -------- DOJI CHECK --------
                     is_doji, body_pct = is_real_doji(d0)
 
-                    if is_doji:
+                    if is_doji and doji_key not in sent_alerts:
+                        sent_alerts.add(doji_key)
                         await bot.send_message(
                             CHAT_ID,
                             f"🟡 DOJI FORMED\n"
@@ -101,20 +102,36 @@ async def scan():
                             f"Body% = {body_pct:.2f}%"
                         )
 
-                    # LONG SETUP
-                    if d1["close"] > d1["open"] and approx_equal(d1["open"], d1["low"]):
-                        sent_alerts.add(key)
+                    # ❌ NO DOJI → NO SETUP (THIS IS THE FIX)
+                    if not is_doji:
+                        continue
+
+                    # -------- LONG SETUP --------
+                    if (
+                        d1["close"] > d1["open"] and
+                        approx_equal(d1["open"], d1["low"]) and
+                        setup_key not in sent_alerts
+                    ):
+                        sent_alerts.add(setup_key)
                         await bot.send_message(
                             CHAT_ID,
-                            f"🟢 LONG SETUP\n{symbol} {tf}\nDoji + Open≈Low"
+                            f"🟢 LONG SETUP\n"
+                            f"{symbol} {tf}\n"
+                            f"Doji → Open≈Low"
                         )
 
-                    # SHORT SETUP
-                    if d1["close"] < d1["open"] and approx_equal(d1["open"], d1["high"]):
-                        sent_alerts.add(key)
+                    # -------- SHORT SETUP --------
+                    if (
+                        d1["close"] < d1["open"] and
+                        approx_equal(d1["open"], d1["high"]) and
+                        setup_key not in sent_alerts
+                    ):
+                        sent_alerts.add(setup_key)
                         await bot.send_message(
                             CHAT_ID,
-                            f"🔴 SHORT SETUP\n{symbol} {tf}\nDoji + Open≈High"
+                            f"🔴 SHORT SETUP\n"
+                            f"{symbol} {tf}\n"
+                            f"Doji → Open≈High"
                         )
 
                 except Exception as e:
