@@ -62,10 +62,16 @@ def is_real_doji(c):
     upper = h - max(o, cl)
     lower = min(o, cl) - l
 
-    body_ok = body <= rng * 0.05
+    body_ok = body <= rng * 0.04 and body <= o * 0.001
+    # body_ok = body <= rng * 0.05
     wick_ok = abs(upper - lower) <= rng * 0.10
     center_ok = abs(((o + cl) / 2) - ((h + l) / 2)) <= rng * 0.10
 
+    print(
+        f"O={o:.4f} H={h:.4f} L={l:.4f} C={cl:.4f} | "
+        f"body={body:.4f} rng={rng:.4f} "
+        f"body%={(body/rng)*100:.2f}%"
+    )
     return body_ok and wick_ok and center_ok
 
 # ---------- HELPERS ----------
