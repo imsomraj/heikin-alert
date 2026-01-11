@@ -54,20 +54,15 @@ def heikin_ashi(candles):
 # ---------- REAL DOJI ----------
 def is_real_doji(c):
     o, h, l, cl = c["open"], c["high"], c["low"], c["close"]
+
     rng = h - l
     if rng == 0:
-        return False
+        return False, 0.0
 
     body = abs(cl - o)
-    upper = h - max(o, cl)
-    lower = min(o, cl) - l
+    body_ratio = body / rng
 
-    body_ok = body <= rng * 0.04 and body <= o * 0.001
-    # body_ok = body <= rng * 0.05
-    wick_ok = abs(upper - lower) <= rng * 0.10
-    center_ok = abs(((o + cl) / 2) - ((h + l) / 2)) <= rng * 0.10
-
-    return body_ok and wick_ok and center_ok
+    return body_ratio <= 0.02, body_ratio * 100
 
 # ---------- HELPERS ----------
 def approx_equal(a, b):
