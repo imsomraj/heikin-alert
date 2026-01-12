@@ -62,7 +62,7 @@ def is_real_doji(c):
     body = abs(cl - o)
     body_ratio = body / rng
 
-    return body_ratio <= 0.02, body_ratio * 100
+    return body_ratio <= 0.06, body_ratio * 100
 
 # ---------- HELPERS ----------
 def approx_equal(a, b):
@@ -83,24 +83,11 @@ async def scan():
                     d1 = ha[-2]  # Setup candle (closed)
                     d2 = ha[-1]  # Live candle
 
-                    doji_key = f"DOJI-{symbol}-{tf}-{candles[-3][0]}"
+                    # doji_key = f"DOJI-{symbol}-{tf}-{candles[-3][0]}"
                     setup_key = f"SETUP-{symbol}-{tf}-{candles[-2][0]}"
 
                     # -------- DOJI CHECK --------
                     is_doji, body_pct = is_real_doji(d0)
-
-                    if is_doji and doji_key not in sent_alerts:
-                        sent_alerts.add(doji_key)
-                        await bot.send_message(
-                            CHAT_ID,
-                            f"🟡 DOJI FORMED\n"
-                            f"{symbol} {tf}\n"
-                            f"O={d0['open']:.4f} "
-                            f"H={d0['high']:.4f} "
-                            f"L={d0['low']:.4f} "
-                            f"C={d0['close']:.4f}\n"
-                            f"Body% = {body_pct:.2f}%"
-                        )
 
                     # ❌ NO DOJI → NO SETUP (THIS IS THE FIX)
                     if not is_doji:
