@@ -13,10 +13,12 @@ SYMBOLS = [
     "SOL/USDT:USDT",
     "BNB/USDT:USDT",
     "XRP/USDT:USDT",
-    "DOGE/USDT:USDT"
+    "DOGE/USDT:USDT",
+    "HYPE/USDT:USDT",
+    "FARTCOIN/USDT:USDT"
 ]
 
-TIMEFRAMES = ["1h","4h","12h","1d"]
+TIMEFRAMES = ["4h","12h","1d"]
 
 POLL_INTERVAL = 60  # seconds
 OPEN_EQUAL_TOL = 0.0005  # 0.05% tolerance
